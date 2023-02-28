@@ -18,6 +18,8 @@ if __name__ =="__main__":
     print("Titik 2:", bf2)
     print("Waktu eksekusi (s):", t2-t1)
     print("Banyak operasi euclidean distance:", c1)
+
+    print()
     
     print("Closest pair dengan Divide and Conquer:")
     t1 = time.time()
