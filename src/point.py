@@ -88,6 +88,7 @@ def stripList(listOfPoints, middle, d):
 #menentukan pasangan terdekat dengan Divide and Conquer
 def closestPairDNC(listOfPoints, axis: int = Axis.X.value):
     n = len(listOfPoints)
+    nDim = len(listOfPoints[0])
     sortedPoints = mergeSort(listOfPoints, axis)
     
     if n <= 3:
@@ -118,7 +119,7 @@ def closestPairDNC(listOfPoints, axis: int = Axis.X.value):
             point2 = rightPoint2
             
         stripPoint = stripList(sortedPoints, middleLine, d)
-        sortedStrip = mergeSort(stripPoint, axis+1)
+        sortedStrip = mergeSort(stripPoint, (axis+1)%nDim)
         
         stripDist, stripPoint1, stripPoint2, temp = closestPairBF(sortedStrip)
         counter += temp
