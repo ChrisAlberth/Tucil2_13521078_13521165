@@ -85,6 +85,14 @@ def stripList(listOfPoints, middle, d):
     return result
     
 
+#mengabaikan titik yang jarak pada salah satu sumbu lebih dari d
+def ignore(point1: List[float], point2: List[float], d: float) -> bool:
+    for i in range(len(point1)):
+        if abs(point1[i]-point2[i]) > d:
+            return True
+    return False
+
+
 #menentukan pasangan terdekat dengan Divide and Conquer
 def closestPairDNC(listOfPoints, axis: int = Axis.X.value):
     n = len(listOfPoints)
@@ -120,7 +128,7 @@ def closestPairDNC(listOfPoints, axis: int = Axis.X.value):
         stripPoint = stripList(sortedPoints, middleLine, d)
         sortedStrip = mergeSort(stripPoint, axis+1)
         
-        stripDist, stripPoint1, stripPoint2, temp = closestPairBF(sortedStrip)
+        stripDist, stripPoint1, stripPoint2, temp = closestPairBF(sortedStrip, filter=lambda point1, point2: ignore(point1, point2, d))
         counter += temp
         
         if (stripDist < d):
@@ -133,7 +141,7 @@ def closestPairDNC(listOfPoints, axis: int = Axis.X.value):
 
 
 #menentukan pasangan terdekat dengan Brute Force
-def closestPairBF(listOfPoints):
+def closestPairBF(listOfPoints, filter = None):
     nPoints = len(listOfPoints)
     nDim = len(listOfPoints[0])
     counter = 0
@@ -144,6 +152,8 @@ def closestPairBF(listOfPoints):
     i = 0
     for i in range(nPoints):
         for j in range(i+1,nPoints):
+            if(filter!=None and filter(listOfPoints[i], listOfPoints[j])):
+                continue
             distResult = eucDistance(listOfPoints[i], listOfPoints[j], nDim)
             counter += 1
             if d > distResult:
