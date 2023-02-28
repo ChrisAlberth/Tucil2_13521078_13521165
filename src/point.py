@@ -1,6 +1,7 @@
 import math
-import matplotlib.pyplot as plt
 import random
+from axis import Axis
+from typing import List, Tuple
 
 #hitung jarak 2 point
 def eucDistance(point1, point2, dimension):
@@ -10,6 +11,7 @@ def eucDistance(point1, point2, dimension):
         sum += (point1[i] - point2[i])**2
         
     return math.sqrt(sum)
+
 
 #inisialisasi point secara random
 def initializePoint(nPoint, nDimension):
@@ -25,6 +27,7 @@ def initializePoint(nPoint, nDimension):
         listOfPoints.append(temp)
         
     return listOfPoints
+
 
 #untuk menggabungkan 2 list secara terurut
 def merge(list1, list2, axis): #axis = pengurutan point berdasarkan sumbu
@@ -52,6 +55,7 @@ def merge(list1, list2, axis): #axis = pengurutan point berdasarkan sumbu
         
     return result
     
+
 #sort dengan Divide and Conquer
 def mergeSort(listOfPoints, axis):
     n = len(listOfPoints)
@@ -70,36 +74,39 @@ def mergeSort(listOfPoints, axis):
         
     return result
         
+
 #mendapat point-point yang berada di strip area
 def stripList(listOfPoints, middle, d):
     result = []
     for point in listOfPoints:
-        if abs(point[0] - middle) < d:
+        if abs(point[Axis.X.value] - middle) < d:
             result.append(point)
             
     return result
+    
 
 #menentukan pasangan terdekat dengan Divide and Conquer
-def closestPairDNC(listOfPoints):
+def closestPairDNC(listOfPoints, axis: int = Axis.X.value):
     n = len(listOfPoints)
-    sortedPoints = mergeSort(listOfPoints, 0)
+    sortedPoints = mergeSort(listOfPoints, axis)
     
     if n <= 3:
-        d, point1, point2 = closestPairBF(sortedPoints)
+        d, point1, point2, counter = closestPairBF(sortedPoints)
     else:
         halfn = n//2
         
         if (n%2 == 0):
             space1 = sortedPoints[0:halfn]
             space2 = sortedPoints[halfn:n]
-            middleLine = (sortedPoints[halfn-1][0] + sortedPoints[halfn][0]) / 2
+            middleLine = (sortedPoints[halfn-1][axis] + sortedPoints[halfn][axis]) / 2
         else:
             space1 = sortedPoints[0:halfn]
             space2 = sortedPoints[halfn+1:n]
-            middleLine = sortedPoints[halfn][0]
+            middleLine = sortedPoints[halfn][axis]
             
-        leftDist, leftPoint1, leftPoint2 = closestPairDNC(space1)
-        rightdist, rightPoint1, rightPoint2 =  closestPairDNC(space2)
+        leftDist, leftPoint1, leftPoint2, counter = closestPairDNC(space1)
+        rightdist, rightPoint1, rightPoint2, temp =  closestPairDNC(space2)
+        counter += temp
             
         if (leftDist < rightdist):
             d = leftDist
@@ -111,9 +118,10 @@ def closestPairDNC(listOfPoints):
             point2 = rightPoint2
             
         stripPoint = stripList(sortedPoints, middleLine, d)
-        sortedStrip = mergeSort(stripPoint, 1)
+        sortedStrip = mergeSort(stripPoint, axis+1)
         
-        stripDist, stripPoint1, stripPoint2 = closestPairBF(sortedStrip)
+        stripDist, stripPoint1, stripPoint2, temp = closestPairBF(sortedStrip)
+        counter += temp
         
         if (stripDist < d):
             d = stripDist
@@ -121,23 +129,26 @@ def closestPairDNC(listOfPoints):
             point2 = stripPoint2
 
     
-    return d, point1, point2
+    return d, point1, point2, counter
+
 
 #menentukan pasangan terdekat dengan Brute Force
 def closestPairBF(listOfPoints):
     nPoints = len(listOfPoints)
+    nDim = len(listOfPoints[0])
+    counter = 0
     
-    d = 100000
+    d = eucDistance(listOfPoints[0], listOfPoints[1], nDim)
     pair1 = []
     pair2 = []
     i = 0
     for i in range(nPoints):
         for j in range(i+1,nPoints):
-            distResult = eucDistance(listOfPoints[i], listOfPoints[j], len(listOfPoints[0]))
+            distResult = eucDistance(listOfPoints[i], listOfPoints[j], nDim)
+            counter += 1
             if d > distResult:
                 d = distResult
                 pair1 = listOfPoints[i]
                 pair2 = listOfPoints[j]
     
-    return d, pair1, pair2
-                
+    return d, pair1, pair2, counter
