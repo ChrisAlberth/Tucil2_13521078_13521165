@@ -1,9 +1,11 @@
 import point
 
 if __name__ =="__main__":
-    print("Find Closest Pair")
-    n = int(input("Banyak point: "))
-    p = point.initializePoint(n)
+    print("Selamat datang di program Find Closest Point!!!")
+
+    nPoint = int(input("Banyak point: "))
+    nDim = int(input("Dimensi: "))
+    p = point.initializePoint(nPoint, nDim)
     
     print("Closest pair dengan Brute Force:")
     distBF, bf1, bf2 = point.closestPairBF(p)
@@ -16,3 +18,4 @@ if __name__ =="__main__":
     print("Jarak terdekat", distDC)
     print("Titik 1:", dc1)
     print("Titik 2:", dc2)
+    

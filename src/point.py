@@ -3,24 +3,31 @@ import matplotlib.pyplot as plt
 import random
 
 #hitung jarak 2 point
-def eucDistance(point1, point2):
-    return math.sqrt((point1[0] - point2[0])**2 + (point1[1] - point2[1])**2 + (point1[2] - point2[2])**2)
+def eucDistance(point1, point2, dimension):
+    sum = 0
+    i = 0
+    for i in range(dimension):
+        sum += (point1[i] - point2[i])**2
+        
+    return math.sqrt(sum)
 
 #inisialisasi point secara random
-def initializePoint(nPoint):
+def initializePoint(nPoint, nDimension):
     listOfPoints = []
     i = 0
-    for i in range (nPoint):
-        x = random.uniform(-1000,1000)
-        y = random.uniform(-1000,1000)
-        z = random.uniform(-1000,1000)
+    for i in range(nPoint):
+        temp = []
+        j = 0
+        for j in range(nDimension):
+            value = random.uniform(-100, 100)
+            temp.append(value)
         
-        listOfPoints.append([x,y,z])
+        listOfPoints.append(temp)
         
     return listOfPoints
 
 #untuk menggabungkan 2 list secara terurut
-def merge(list1, list2):
+def merge(list1, list2, axis): #axis = pengurutan point berdasarkan sumbu
     result = []
     n1 = len(list1)
     n2 = len(list2)
@@ -28,7 +35,7 @@ def merge(list1, list2):
     i = 0
     j = 0
     while ((i < n1) and (j < n2)):
-        if list1[i][0] <= list2[j][0]:
+        if list1[i][axis] <= list2[j][axis]:
             result.append(list1[i])
             i += 1
         else:
@@ -46,101 +53,75 @@ def merge(list1, list2):
     return result
     
 #sort dengan Divide and Conquer
-def mergeSort(listOfPoints):
+def mergeSort(listOfPoints, axis):
     n = len(listOfPoints)
-    mid = int(n/2)
+    mid = n//2
     
     if (n > 1):
         list1 = listOfPoints[0:mid]
         list2 = listOfPoints[mid:]
         
-        sorted1 = mergeSort(list1)
-        sorted2 = mergeSort(list2)
+        sorted1 = mergeSort(list1, axis)
+        sorted2 = mergeSort(list2, axis)
         
-        result = merge(sorted1, sorted2)
+        result = merge(sorted1, sorted2, axis)
     else:
         result = listOfPoints
         
     return result
         
+#mendapat point-point yang berada di strip area
+def stripList(listOfPoints, middle, d):
+    result = []
+    for point in listOfPoints:
+        if abs(point[0] - middle) < d:
+            result.append(point)
+            
+    return result
+
 #menentukan pasangan terdekat dengan Divide and Conquer
 def closestPairDNC(listOfPoints):
-    nPoint = len(listOfPoints)
-
-    # d jarak, pair1 = point pertama, pair2 = point kedua
-    d1, p11, p12 = closestPairInArea(listOfPoints, nPoint)
-    d2, p21, p22 = compareStrip(listOfPoints)
+    n = len(listOfPoints)
+    sortedPoints = mergeSort(listOfPoints, 0)
     
-    if (d1 < d2):
-        return d1, p11, p12
+    if n <= 3:
+        d, point1, point2 = closestPairBF(sortedPoints)
     else:
-        return d2, p21, p22
-    
-
-#menentukan pasangan point terdekat dari 2 area
-#masih error    
-def closestPairInArea(listOfPoints, n):
-    listOfPoints = mergeSort(listOfPoints)
-    
-    if n == 2:
-        d = eucDistance(listOfPoints[0], listOfPoints[1])
-        pair1 = listOfPoints[0]
-        pair2 = listOfPoints[1]
-    else:
-        S1 = []
-        S2 = []
-        i = 0
-        for i in range(n):
-            if i < n/2:
-                S1.append(listOfPoints[i])
-            else:
-                S2.append(listOfPoints[i])
-                
-        # d jarak, pair1 = point pertama, pair2 = point kedua
-        d1, leftPair1, leftPair2 = closestPairInArea(S1, len(S1)) 
-        d2, rightPair1, rightPair2 = closestPairInArea(S2, len(S2))
-
-        if d1 <= d2:
-            d = d1
-            pair1 = leftPair1
-            pair2 = leftPair2
-        else:
-            d = d2
-            pair1 = rightPair1
-            pair2 = rightPair2
-    
-    return d, pair1, pair2
-
-#mencari pasangan terdekat di strip area
-#masih error
-def compareStrip(listOfPoints):
-    nPoints = len(listOfPoints)
-    mid = nPoints/2
-    if nPoints % 2 == 0:
-        l = (listOfPoints[mid-1][0] + listOfPoints[mid][0])/2.0
-    else:
-        l = listOfPoints[mid][0]
+        halfn = n//2
         
-    pointInStrip = []
-    for point in listOfPoints:
-        if point[0] > l - d and point[0] < l + d:
-            pointInStrip.append(point)
+        if (n%2 == 0):
+            space1 = sortedPoints[0:halfn]
+            space2 = sortedPoints[halfn:n]
+            middleLine = (sortedPoints[halfn-1][0] + sortedPoints[halfn][0]) / 2
+        else:
+            space1 = sortedPoints[0:halfn]
+            space2 = sortedPoints[halfn+1:n]
+            middleLine = sortedPoints[halfn][0]
             
-    nStrip = len(pointInStrip)
-    d = 1000000
-    pair1 = []
-    pair2 = []
-    i = 0
-    for i in range(nStrip):
-        j = i + 1
-        for j in range(nStrip):
-            distResult = eucDistance(pointInStrip[i], pointInStrip[j])
-            if d > distResult:
-                d = distResult
-                pair1 = pointInStrip[i]
-                pair2 = pointInStrip[j]
-                
-    return d, pair1, pair2
+        leftDist, leftPoint1, leftPoint2 = closestPairDNC(space1)
+        rightdist, rightPoint1, rightPoint2 =  closestPairDNC(space2)
+            
+        if (leftDist < rightdist):
+            d = leftDist
+            point1 = leftPoint1
+            point2 = leftPoint2
+        else:
+            d = rightdist
+            point1 = rightPoint1
+            point2 = rightPoint2
+            
+        stripPoint = stripList(sortedPoints, middleLine, d)
+        sortedStrip = mergeSort(stripPoint, 1)
+        
+        stripDist, stripPoint1, stripPoint2 = closestPairBF(sortedStrip)
+        
+        if (stripDist < d):
+            d = stripDist
+            point1 = stripPoint1
+            point2 = stripPoint2
+
+    
+    return d, point1, point2
 
 #menentukan pasangan terdekat dengan Brute Force
 def closestPairBF(listOfPoints):
@@ -152,7 +133,7 @@ def closestPairBF(listOfPoints):
     i = 0
     for i in range(nPoints):
         for j in range(i+1,nPoints):
-            distResult = eucDistance(listOfPoints[i], listOfPoints[j])
+            distResult = eucDistance(listOfPoints[i], listOfPoints[j], len(listOfPoints[0]))
             if d > distResult:
                 d = distResult
                 pair1 = listOfPoints[i]
