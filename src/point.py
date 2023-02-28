@@ -1,7 +1,6 @@
 import math
 import matplotlib.pyplot as plt
 import random
-import numpy as np      
 
 #hitung jarak 2 point
 def eucDistance(point1, point2):
@@ -20,6 +19,50 @@ def initializePoint(nPoint):
         
     return listOfPoints
 
+#untuk menggabungkan 2 list secara terurut
+def merge(list1, list2):
+    result = []
+    n1 = len(list1)
+    n2 = len(list2)
+    
+    i = 0
+    j = 0
+    while ((i < n1) and (j < n2)):
+        if list1[i][0] <= list2[j][0]:
+            result.append(list1[i])
+            i += 1
+        else:
+            result.append(list2[j])
+            j += 1
+            
+    while (i < n1):
+        result.append(list1[i])
+        i += 1
+        
+    while (j < n2):
+        result.append(list2[j])
+        j += 1
+        
+    return result
+    
+#sort dengan Divide and Conquer
+def mergeSort(listOfPoints):
+    n = len(listOfPoints)
+    mid = int(n/2)
+    
+    if (n > 1):
+        list1 = listOfPoints[0:mid]
+        list2 = listOfPoints[mid:]
+        
+        sorted1 = mergeSort(list1)
+        sorted2 = mergeSort(list2)
+        
+        result = merge(sorted1, sorted2)
+    else:
+        result = listOfPoints
+        
+    return result
+        
 #menentukan pasangan terdekat dengan Divide and Conquer
 def closestPairDNC(listOfPoints):
     nPoint = len(listOfPoints)
@@ -37,7 +80,7 @@ def closestPairDNC(listOfPoints):
 #menentukan pasangan point terdekat dari 2 area
 #masih error    
 def closestPairInArea(listOfPoints, n):
-    listOfPoints = np.sort(listOfPoints, axis=0)
+    listOfPoints = mergeSort(listOfPoints)
     
     if n == 2:
         d = eucDistance(listOfPoints[0], listOfPoints[1])
