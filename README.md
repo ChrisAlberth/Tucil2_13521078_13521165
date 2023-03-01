@@ -7,7 +7,7 @@
 - `doc` berisi laporan dalam format pdf
 
 ## Program Requirement
-- python3 (stable/latest version)
+- python 3.10 (stable/latest version)
 - matplotlib
 - this folder
 
@@ -22,6 +22,8 @@
 4. Program akan menampilkan jarak dan pasangan point terdekat berdasarkan algoritma yang dipakai
 5. User dapat kembali memilih menu atau selesai menggunakan program
 
-## Pembuat
-Christian Albert Hasiholan - 13521078
-Reza Pahlevi Ubaidillah - 13521165
+## Author
+| Name         | NIM            | Github |
+| :---         |     :---:      |          ---: |
+| Christian Albert Hasiholan  | 13521078     |[ChrisAlberth](https://github.com/ChrisAlberth) |
+| Reza Pahlevi Ubaidillah  | 13521165     |[obediqbal](https://github.com/obediqbal) |
