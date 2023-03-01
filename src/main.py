@@ -10,15 +10,15 @@ if __name__ =="__main__":
         print("\nMenu")
         print("1. 3 Dimensional Space")
         print("2. Euclidean Space (Vector Rn)")
-        print("3. Keluar Program")
+        print("0. Keluar Program")
         
         try:
             menuInp = int(input("Masukan pilihan menu: "))
         
-            if (menuInp not in [1,2,3]):
+            if (menuInp not in [1,2,0]):
                 print("Pilihan menu tidak ada. Pilih kembali menu!")
             else:
-                if (menuInp == 3):
+                if (menuInp == 0):
                     print("Terima kasih sudah menggunakan program kami. Sampai jumpa")
                     break
                     exit()

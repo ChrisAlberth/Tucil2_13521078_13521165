@@ -147,8 +147,8 @@ def closestPairBF(listOfPoints, filter = None):
     counter = 0
     
     d = eucDistance(listOfPoints[0], listOfPoints[1], nDim)
-    pair1 = []
-    pair2 = []
+    pair1 = listOfPoints[0]
+    pair2 = listOfPoints[1]
     i = 0
     for i in range(nPoints):
         for j in range(i+1,nPoints):
