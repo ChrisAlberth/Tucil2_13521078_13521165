@@ -1,5 +1,5 @@
 # Tucil2_13521078_13521165
-> Misalkan terdapat n buah titik pada ruang 3D, dimana setiap titik P di dalam ruang tersebut dinyatakan dengan koordinat P = (x, y, z). Maka pada Tucil 2 ini akan dicari sepasang titik yang mempunyai jarak terdekat satu sama lain yang jaraknya dihitung dengan rumus Euclidean. Program menerapkan algoritma Civide and Conquer untuk penyelesaiannya dan akan dibandingkan juga dengan algoritma Brute Force.
+> Misalkan terdapat n buah titik pada ruang 3D, dimana setiap titik P di dalam ruang tersebut dinyatakan dengan koordinat P = (x, y, z). Maka pada Tucil 2 ini akan dicari sepasang titik yang mempunyai jarak terdekat satu sama lain yang jaraknya dihitung dengan rumus Euclidean. Program menerapkan algoritma Divide and Conquer untuk penyelesaiannya dan akan dibandingkan juga dengan algoritma Brute Force.
 
 ## Struktur Folder
 - `src` berisi sourcecode program
